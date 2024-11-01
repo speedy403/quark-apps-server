@@ -2,15 +2,25 @@
 
 # Dependencies
 import os
+import time
 import pymysql
+import hashlib
 
 # Configure the DB connection
 db_config = {
     'user': os.getenv('QUARK_DB_USER'),
     'password': os.getenv('QUARK_DB_PASS'),
-    'host': os.getenv('QUARK_DB_HOST'),
+    'host': os.getenv('QUARK_DB_HOST', 'quark-apps-server-db'),
     'database': os.getenv('QUARK_DB_NAME')
 }
+
+# Function to calculate the SHA256 hash of a file
+def calculate_sha256(file_path):
+    sha256_hash = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(chunk)
+    return sha256_hash.hexdigest()
 
 # Function to initialize the database
 def init_db():
@@ -26,19 +36,21 @@ def init_db():
         # If the table already exists, do nothing
         if result:
             print("DB_INIT: Table already exists, skipping initialization")
-            exit()
+            return
         else:
+            print("DB_INIT: Table does not exist, initializing...")
             # Create the table
-            cursor.execute("""
+            cursor.execute('''
                 CREATE TABLE apps (
                     app_id INT PRIMARY KEY AUTO_INCREMENT,
                     app_name VARCHAR(255) NOT NULL,
                     app_version VARCHAR(255) NOT NULL,
-                    md5_hash VARCHAR(255) NOT NULL,
+                    sha256_hash VARCHAR(255) NOT NULL,
                     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     filename VARCHAR(255) NOT NULL,
                     path VARCHAR(255) NOT NULL
-            """)
+                );
+            ''')
 
             # Commit the changes
             connection.commit()
@@ -51,6 +63,9 @@ def init_db():
 
 # Function to scan for new apps
 def scan_apps():
+    # Print a message
+    print("DB_INIT: Scanning for new apps...")
+    
     # Create the connection to the database
     connection = pymysql.connect(**db_config)
 
@@ -59,16 +74,12 @@ def scan_apps():
         # Query the database for all apps
         cursor.execute("SELECT * FROM apps")
         apps = cursor.fetchall()
-
-        # Print the apps
-        for app in apps:
-            print(app)
     
     # Close the connection
     connection.close()
 
     # Iterate through the directory
-    for root, dirs, files in os.walk('/apps'):
+    for root, dirs, files in os.walk('/usr/share/nginx/html/apps'):
         for file in files:
             # Check if it is in the database
             found = False
@@ -85,10 +96,24 @@ def scan_apps():
                 # Create the connection to the database
                 connection = pymysql.connect(**db_config)
 
+                # Grab the filename
+                filename = os.path.basename(file)
+
+                # Create the file path
+                file_path = os.path.join(root, filename)
+                
+                # Compute the hash
+                sha256_hash = calculate_sha256(file_path)
+
+                # Grab the current date
+                last_updated = time.strftime('%Y-%m-%d %H:%M:%S')
+
+                print(f"DB_INIT: File info for {file}: {filename}, N/A, {sha256_hash}, {last_updated}, {filename}, {file_path}")
+
                 # Create the cursor
                 with connection.cursor() as cursor:
                     # Insert the app into the database
-                    cursor.execute("INSERT INTO apps (app_name, app_version, md5_hash, filename) VALUES (%s, %s, %s, %s)", (file, '1.0.0', '1234567890', file))
+                    cursor.execute("INSERT INTO apps (app_name, app_version, sha256_hash, last_updated, filename, path) VALUES (%s, %s, %s, %s, %s, %s)", (filename, 'N/A', sha256_hash, last_updated, filename, file_path))
 
                     # Commit the changes
                     connection.commit()
