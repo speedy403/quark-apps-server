@@ -9,10 +9,10 @@ services:
     environment:
       - PORT=8080
       - HOST=localhost
-      #- QUARK_DB_HOST=localhost
-      #- QUARK_DB_NAME: quark
-      #- QUARK_DB_USER: quark
-      #- QUARK_DB_PASS: quarkPassw0rd # Change for production use
+      - QUARK_DB_HOST=localhost
+      - QUARK_DB_NAME=quark
+      - QUARK_DB_USER=quark
+      - QUARK_DB_PASS=quarkPassw0rd # Change for production use
     volumes:
       - ./apps:/apps:rw
   

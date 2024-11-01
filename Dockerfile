@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y python3 python3-pip && \
     apt-get install -y python3-flask python3-flask-cors && \
-    #apt-get install -y python3-mysql.connector && \
+    apt-get install -y python3-pymysql && \
     apt-get install -y gunicorn
 
 # Set the working directory to the flask app

@@ -3,13 +3,11 @@
 # Dependencies
 from flask import Flask, jsonify
 import os
-
-# Import the MySQL database connection
-#import mysql.connector
+import pymysql
 
 # Configure the DB connection
 db_config = {
-    'user': os.getenv('QUARK_DB_NAME'),
+    'user': os.getenv('QUARK_DB_USER'),
     'password': os.getenv('QUARK_DB_PASS'),
     'host': os.getenv('QUARK_DB_HOST'),
     'database': os.getenv('QUARK_DB_NAME')
@@ -23,12 +21,14 @@ app = Flask(__name__)
 def get_apps():
     # try:
     #     # Connect to the database
-    #     connection = mysql.connector.connect(**db_config)
-    #     cursor = connection.cursor()
+    #     connection = pymysql.connect(**db_config)
 
     #     # Query the database
-    #     cursor.execute('SELECT app_id, app_name, app_version, md5_hash FROM apps')
-    #     apps = cursor.fetchall()
+    #     with connection:
+    #         with connection.cursor() as cursor:
+    #             # Read all the apps from the database
+    #             cursor.execute("SELECT * FROM apps")
+    #             apps = cursor.fetchall()
 
     #     # Convert to a list of dictionaries
     #     apps_list = []
@@ -40,15 +40,12 @@ def get_apps():
     #             'md5_hash': app[3]
     #         })
 
-    # except mysql.connector.Error as err:
+    # except pymysql.Error as err:
     #     return jsonify({"error": str(err)}), 500
-
+    
     # finally:
-    #     # Ensure the connection is closed
-    #     if cursor:
-    #         cursor.close()
-    #     if connection:
-    #         connection.close()
+    #     # Close the connection
+    #     connection.close()
 
     # Testing correct environment variables
     print(db_config)
@@ -66,6 +63,18 @@ def get_apps():
             'app_name': 'App 2',
             'app_version': '1.0.0',
             'md5_hash': '0987654321'
+        },
+        {
+            'app_id': 3,
+            'app_name': 'App 3',
+            'app_version': '1.0.0',
+            'md5_hash': '6789012345'
+        },
+        {
+            'app_id': 4,
+            'app_name': 'App 4',
+            'app_version': '1.0.0',
+            'md5_hash': '5432109876'
         }
     ]
 
