@@ -38,6 +38,9 @@ def get_apps():
     #             'app_name': app[1],
     #             'app_version': app[2],
     #             'md5_hash': app[3]
+    #             'last_updated': app[4],
+    #             'filename': app[5]
+    #             'path': app[6]
     #         })
 
     # except pymysql.Error as err:
@@ -56,25 +59,37 @@ def get_apps():
             'app_id': 1,
             'app_name': 'App 1',
             'app_version': '1.0.0',
-            'md5_hash': '1234567890'
+            'md5_hash': '1234567890',
+            'last_updated': '2023-10-01 12:00:00',
+            'filename': 'app1.zip',
+            'path': '/apps/app1.zip'
         },
         {
             'app_id': 2,
             'app_name': 'App 2',
             'app_version': '1.0.0',
-            'md5_hash': '0987654321'
+            'md5_hash': '0987654321',
+            'last_updated': '2023-10-01 12:00:00',
+            'filename': 'app2.zip',
+            'path': '/apps/app2.zip'
         },
         {
             'app_id': 3,
             'app_name': 'App 3',
             'app_version': '1.0.0',
-            'md5_hash': '6789012345'
+            'md5_hash': '6789012345',
+            'last_updated': '2023-10-01 12:00:00',
+            'filename': 'app3.zip',
+            'path': '/apps/app3.zip'
         },
         {
             'app_id': 4,
             'app_name': 'App 4',
             'app_version': '1.0.0',
-            'md5_hash': '5432109876'
+            'md5_hash': '5432109876',
+            'last_updated': '2023-10-01 12:00:00',
+            'filename': 'app4.zip',
+            'path': '/apps/app4.zip'
         }
     ]
 

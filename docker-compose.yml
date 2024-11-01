@@ -14,7 +14,7 @@ services:
       - QUARK_DB_USER=quark
       - QUARK_DB_PASS=quarkPassw0rd # Change for production use
     volumes:
-      - ./apps:/apps:rw
+      - ./apps:/usr/share/nginx/html/apps:rw
   
   quark_db:
     image: mysql:8.0.40-debian

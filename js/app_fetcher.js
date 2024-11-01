@@ -14,9 +14,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Insert cells for each attribute of the app
                 row.insertCell(0).textContent = app.app_id;
-                row.insertCell(1).textContent = app.app_name;
+                
+                /* Create a link to the app's download page */
+                const link = document.createElement('a');
+                link.href = `/apps/${app.filename}`;
+                link.textContent = app.app_name;
+                link.setAttribute('download', app.filename); // Ensure it is always a download link
+                row.insertCell(1).appendChild(link);
+                
+                /* Add the app version and MD5 hash */
                 row.insertCell(2).textContent = app.app_version;
                 row.insertCell(3).textContent = app.md5_hash;
+
+                /* Format the last updated date */
+                const lastUpdated = new Date(app.last_updated);
+                const formattedDate = lastUpdated.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                row.insertCell(4).textContent = formattedDate;
             });
         })
         .catch(error => console.error('Error fetching data:', error));
