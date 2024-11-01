@@ -1,0 +1,30 @@
+---
+services:
+  quark_apps_server:
+    image: quark-apps-server:latest
+    container_name: quark-apps-server
+    ports:
+      - "8080:8080"
+      - "5000:5000"
+    environment:
+      - PORT=8080
+      - HOST=localhost
+      #- QUARK_DB_HOST=localhost
+      #- QUARK_DB_NAME: quark
+      #- QUARK_DB_USER: quark
+      #- QUARK_DB_PASS: quarkPassw0rd # Change for production use
+    volumes:
+      - ./apps:/apps:rw
+  
+  quark_db:
+    image: mysql:8.0.40-debian
+    container_name: quark-apps-server-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: devPassw0rd! # Change for production use
+      MYSQL_DATABASE: quark
+      MYSQL_USER: quark
+      MYSQL_PASSWORD: quarkPassw0rd # Change for production use
+    volumes:
+      - ./db:/var/lib/mysql:rw

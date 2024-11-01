@@ -1,0 +1,227 @@
+/* Set the character set */
+@charset "UTF-8";
+
+/*
+General Styles
+-------------------------------------------------------------------------------
+*/
+
+/* Root Variables */
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --secondary-color: #6c757d;
+    --secondary-hover-color: #5a6268;
+    --background-color: #eeeeee;
+    --text-color: #333;
+    --text-light-color: #666;
+    --table-header-bg-color: #eeeeee;
+    --table-header-text-color: #333;
+    --table-border-color: #818181;
+    --table-odd-row-color: #eeeeee;
+    --form-border-color: #adadad;
+    --container-bg-color: #fff;
+    --box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Body CSS */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 20px;
+}
+
+/* Headers CSS */
+h1, h2, h3, h4, h5, h6 {
+    background: -webkit-linear-gradient(45deg, #f3ec78, #af4261);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: var(--text-color);
+    text-align: left;
+    padding: 20px;
+}
+h1 {
+    font-size: 2.5em;
+}
+h2 {
+    font-size: 2em;
+}
+h3 {
+    font-size: 1.5em;
+}
+h4 {
+    font-size: 1.2em;
+}
+h5 {
+    font-size: 1em;
+
+}
+h6 {
+    font-size: 0.8em;
+}
+
+/* Paragraph CSS */
+p {
+    line-height: 1.6;
+    color: var(--text-light-color);
+}
+
+/* Links CSS */
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--text-light-color);
+}
+
+/* Table CSS */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 20px;
+}
+th {
+    border-bottom: 1px solid var(--table-border-color);
+    font-size: 1.2em;
+    background-color: var(--table-header-bg-color);
+    color: var(--table-header-text-color);
+    text-align: left;
+    padding: 10px;
+}
+td {
+    border-bottom: 1px solid var(--table-border-color);
+    text-align: left;
+    padding: 10px;
+}
+tr {
+    border-bottom: 1px solid var(--table-border-color);
+}
+tr:nth-child(odd) {
+    background-color: var(--table-odd-row-color);
+}
+
+/*
+Container Styles
+-------------------------------------------------------------------------------
+*/
+
+/* Centered style */
+.centered {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Label for the container */
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* CSS for the form */
+form {
+    width: 95%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid var(--form-border-color);
+    border-radius: 8px;
+    background-color: var(--container-bg-color);
+    transition: width 0.2s ease;
+    box-shadow: var(--box-shadow);
+}
+
+/* Resize the form for smaller screens */
+@media screen and (max-width: 1300px) {
+    form {
+        width: 95%;
+    }
+}
+@media screen and (max-width: 768px) {
+    form {
+        width: 98%;
+        padding: 15px;
+    }
+}
+@media screen and (max-width: 480px) {
+    form {
+        width: 98%;
+        padding: 10px;
+        margin: 0 0%;
+    }
+}
+
+/*
+CSS for buttons
+-------------------------------------------------------------------------------
+*/
+
+/* Submit Button */
+input[type=submit] {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+}
+input[type=submit]:hover {
+    background-color: var(--secondary-hover-color);
+}
+
+/* Back Button */
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    background-color: var(--primary-color);
+    transition: background-color 0.2s ease;
+}
+.back-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/* Default Button */
+.default-button {
+    text-align: center;
+    margin-top: 20px;
+}
+.default-button button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+.default-button button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/*
+CSS for input fields
+-------------------------------------------------------------------------------
+*/
+
+/* Input fields */
+input[type=text], input[type=version]{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid var(--form-border-color);
+    border-radius: 4px;
+}

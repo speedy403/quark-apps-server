@@ -1,0 +1,5 @@
+# Ignore any apps in the apps directory
+/apps/*
+
+# Ignore the database directory
+/db/*
