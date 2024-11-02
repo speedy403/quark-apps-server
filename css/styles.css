@@ -22,6 +22,7 @@ General Styles
     --form-border-color: #818181;
     --container-bg-color: #fff;
     --box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    --link-color: #007bff;
 }
 
 /* Body CSS */
@@ -71,7 +72,7 @@ p {
 
 /* Links CSS */
 a {
-    color: var(--text-color);
+    color: var(--link-color);
     text-decoration: none;
 }
 a:hover {
@@ -116,6 +117,11 @@ Container Styles
     text-align: center;
     margin-top: 20px;
 }
+.centered-scroll {
+    text-align: center;
+    margin-top: 20px;
+    overflow-x: auto;
+}
 
 /* Label for the container */
 label {
@@ -134,6 +140,7 @@ form {
     background-color: var(--container-bg-color);
     transition: width 0.2s ease;
     box-shadow: var(--box-shadow);
+    box-sizing: border-box;
 }
 
 /* Resize the form for smaller screens */
@@ -152,7 +159,6 @@ form {
     form {
         width: 98%;
         padding: 10px;
-        margin: 0 0%;
     }
 }
 

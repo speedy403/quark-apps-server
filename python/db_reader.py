@@ -37,9 +37,11 @@ def get_apps():
                 'app_name': app[1],
                 'app_version': app[2],
                 'sha256_hash': app[3],
-                'last_updated': app[4],
-                'filename': app[5],
-                'path': app[6]
+                'md5_hash': app[4],
+                'last_updated': app[5],
+                'filesize': app[6],
+                'filename': app[7],
+                'path': app[8]
             })
 
     except pymysql.Error as err:

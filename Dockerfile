@@ -34,4 +34,5 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Start the NGINX and Gunicorn services
 CMD ["sh", "-c", "gunicorn -w 4 -b 0.0.0.0:5000 db_reader:app \
+        & python3 /app/db_init.py \
         & nginx -g 'daemon off;'"]
