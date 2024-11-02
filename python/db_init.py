@@ -3,16 +3,10 @@
 # Dependencies
 import os
 import time
-import pymysql
 import hashlib
 
-# Configure the DB connection
-db_config = {
-    'user': os.getenv('QUARK_DB_USER'),
-    'password': os.getenv('QUARK_DB_PASS'),
-    'host': os.getenv('QUARK_DB_HOST', 'quark-apps-server-db'),
-    'database': os.getenv('QUARK_DB_NAME')
-}
+# Import local dependencies
+from db_connector import *
 
 # Function to calculate the SHA256 hash of a file
 def calculate_sha256(file_path):
@@ -41,18 +35,12 @@ def calculate_md5(file_path):
 # Function to initialize the database
 def init_db():
     # Create the connection to the database 5 retries, 5 seconds apart
-    for i in range(5):
-        try:
-            connection = pymysql.connect(**db_config)
-            break
-        except pymysql.MySQLError as e:
-            print(f"DB_INIT: Error connecting to database: {e} - Retry: {i+1} Max Retries: 5")
-            time.sleep(5)
-    
-    # If the connection still fails, exit the script
-    if not connection.open:
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
         print("DB_INIT: Unable to connect to the database")
-        return
+        return None
 
     # Create the cursor
     with connection.cursor() as cursor:
@@ -95,8 +83,13 @@ def scan_apps():
     # Print a message
     print("DB_INIT: Scanning for new apps...")
     
-    # Create the connection to the database
-    connection = pymysql.connect(**db_config)
+    # Create the connection to the database 5 retries, 5 seconds apart
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
+        print("DB_CLEANER: Unable to connect to the database")
+        return None
 
     # Create the cursor
     with connection.cursor() as cursor:
@@ -129,8 +122,13 @@ def scan_apps():
             if not found:
                 print(f"DB_INIT: Adding {file} to the database...")
 
-                # Create the connection to the database
-                connection = pymysql.connect(**db_config)
+                # Create the connection to the database 5 retries, 5 seconds apart
+                connection = db_connect()
+
+                # Check if the connection is valid
+                if connection is None:
+                    print("DB_CLEANER: Unable to connect to the database")
+                    return None
                 
                 # Compute the hash
                 sha256_hash = calculate_sha256(file_path)

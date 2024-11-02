@@ -17,11 +17,13 @@ COPY python /app
 
 # Copy the website content
 COPY html /usr/share/nginx/html
+COPY admin /usr/share/nginx/admin
 COPY css /usr/share/nginx/html/css
 COPY js /usr/share/nginx/html/js
 
 # Copy the favicon
 COPY assets/favicon.ico /usr/share/nginx/html/favicon.ico
+COPY assets/favicon.ico /usr/share/nginx/admin/favicon.ico
 
 # Copy the NGINX configuration files
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
@@ -34,6 +36,8 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Start the NGINX and Gunicorn services
 CMD ["sh", "-c", "gunicorn -w 4 -b 0.0.0.0:5000 db_reader:app \
+        & gunicorn -w 4 -b 0.0.0.0:5001: hash_api:app \
+        & gunicorn -w 4 -b 0.0.0.0:5002: db_admin:app \
         & python3 /app/db_init.py \
         & python3 /app/db_cleaner.py \
         & nginx -g 'daemon off;'"]

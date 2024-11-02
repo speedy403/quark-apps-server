@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preload" href="/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/css/styles.css"></noscript>
+
+
+        <meta charset="UTF-8">
+        <title>Quark Admin</title>
+        <meta name="description" content="The Quark Apps website">
+    </head>
+
+    <body>
+        <form>
+            <h1 class="centered">Quark Admin</h1>
+            
+            <!-- Input search box -->
+            <input type="text" id="search" onkeyup="searchApps()" placeholder="Search for apps..." style="display: inline;">
+
+            <h2>Available Apps</h2>
+            <div class="centered-scroll">
+                <table id="apps-table">
+                    <tr>
+                        <th>App ID</th>
+                        <th>App Name</th>
+                        <th>Version</th>
+                        <th>SHA256 Hash</th>
+                        <th>MD5 Hash</th>
+                        <th>File Size</th>
+                        <th>Last Update</th>
+                        <th>Update</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </body>
+
+    <!-- Load the JS code to -->
+    <script src="/js/app_fetcher_admin.js"></script>
+</html>

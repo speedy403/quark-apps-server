@@ -5,9 +5,10 @@ services:
     container_name: quark-apps-server
     ports:
       - "8080:8080"
-      - "5000:5000"
+      - "9000:9000"
     environment:
       - PORT=8080
+      - ADMIN_PORT=9000
       - HOST=localhost
       #- QUARK_DB_HOST=127.0.0.1
       - QUARK_DB_NAME=quark
