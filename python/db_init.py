@@ -48,6 +48,11 @@ def init_db():
         except pymysql.MySQLError as e:
             print(f"DB_INIT: Error connecting to database: {e} - Retry: {i+1} Max Retries: 5")
             time.sleep(5)
+    
+    # If the connection still fails, exit the script
+    if not connection.open:
+        print("DB_INIT: Unable to connect to the database")
+        return
 
     # Create the cursor
     with connection.cursor() as cursor:
