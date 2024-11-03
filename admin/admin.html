@@ -18,6 +18,10 @@
             <input type="text" id="search" onkeyup="searchApps()" placeholder="Search for apps..." style="display: inline;">
 
             <h2>Available Apps</h2>
+            <div class="centered-flex"></div>
+                <button type="button" class="default-button" style="background-color: #5f5fff;" onclick="window.location.href='/admin/add'">Add App</button>
+                <button type="button" class="default-button" style="background-color: red;"       onclick="window.location.href='/admin/recompute'">Recompute Database</button>
+            </div>
             <div class="centered-scroll">
                 <table id="apps-table">
                     <tr>
