@@ -124,7 +124,6 @@ Container Styles
 }
 .centered-flex {
     text-align: center;
-    margin-top: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -243,7 +242,7 @@ CSS for input fields
 
 /* Input fields */
 input[type=text], input[type=version]{
-    width: 100%;
+    width: 25%;
     padding: 10px;
     margin-bottom: 10px;
     box-sizing: border-box;

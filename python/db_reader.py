@@ -17,7 +17,7 @@ def get_apps():
 
     # Check if the connection is valid
     if connection is None:
-        print("DB_CLEANER: Unable to connect to the database")
+        print("DB_READER: Unable to connect to the database")
         return None
 
     # Query the database
@@ -25,6 +25,9 @@ def get_apps():
         # Read all the apps from the database
         cursor.execute("SELECT * FROM apps")
         apps = cursor.fetchall()
+
+    #
+    print("DB_READER: Reading data from the database...")
 
     # Convert to a list of dictionaries
     apps_list = []
