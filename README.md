@@ -22,8 +22,8 @@ To make this possible, we needed to create a simple API that allows administrato
 
 To achieve this, after the web server receives a request from a client asking for the file checksum, the Python backend will communicate with the MySQL database holding information about the files. The server will then respond with the appropriate MD5 or SHA256 hash value, allowing for file integrity checking on the client.
 
-Example: `curl -o https://apps.mydomain.com/api/md5/path/to/file`
+Example: `curl -o https://apps.mydomain.com/api/md5/file`
 
-Example: `curl -o https://apps.mydomain.com/api/sha256/path/to/file`
+Example: `curl -o https://apps.mydomain.com/api/sha256/file`
 
 The example above will return a simple hash of the file located at the specified path.
