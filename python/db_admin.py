@@ -1,7 +1,7 @@
 # Script to manage existing files in the database
 
 # Dependencies
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, redirect, request
 import os
 
 # Import local dependencies
@@ -22,25 +22,25 @@ def upload_file():
 
     # Check if the connection is valid
     if connection is None:
-        return jsonify({"error": "Unable to connect to the database"}), 500
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
         return None
     
     # Check if the file is in the request
     if 'app' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+        return redirect(f'/error.html?error=No+file+part+in+the+request')
 
     # Create the cursor
     with connection.cursor() as cursor:
         # Get the file from the request
         file = request.files['app']
         if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
+            return redirect(f'/error.html?error=No+selected+file')
         
         # Check if the file already exists in the database
         cursor.execute("SELECT * FROM apps WHERE filename = %s", (file.filename,))
         result = cursor.fetchone()
         if result:
-            return jsonify({"error": "File already exists in the database"})
+            return redirect(f'/error.html?error=File+already+exists+in+the+database')
 
         # Save the file to the filesystem
         file_path = os.path.join(BASE_DIR, file.filename)
@@ -84,7 +84,7 @@ def delete_file(app_id):
 
     # Check if the connection is valid
     if connection is None:
-        return jsonify({"error": "Unable to connect to the database"}), 500
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
         return None
 
     # Create the cursor
@@ -97,11 +97,11 @@ def delete_file(app_id):
         try:
             os.remove(result[8])
         except:
-            return jsonify({"error": "File not found", "app_id": app_id}), 404
+            return redirect(f'/error.html?error=Unable+to+delete+file+from+the+filesystem')
 
         # Check if the file exists in the database
         if not result:
-            return jsonify({"error": "File not found", "app_id": app_id}), 404
+            return redirect(f'/error.html?error=Unable+to+delete+file+from+the+filesystem')
 
         # Delete the file from the database
         cursor.execute("DELETE FROM apps WHERE app_id = %s", (app_id,))
@@ -140,7 +140,8 @@ def db_recompute():
     except:
         # If the recompute fails, print an error message
         print("DB_RECOMPUTE: Error recomputing app_id column")
-        return
+        return redirect(f'/error.html?error=Error+recomputing+app_id+column')
+    
     finally:
         # Close the connection
         print("DB_RECOMPUTE: Recompute successful")

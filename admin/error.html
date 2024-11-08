@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preload" href="/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/css/styles.css"></noscript>
+
+
+        <meta charset="UTF-8">
+        <title>Quark Apps Admin</title>
+        <meta name="description" content="The Quark Apps website">
+    </head>
+
+    <body>
+        <!-- Handle error reporting from the ?error= varable passed to the page -->
+        <h1 class="centered">Quark Error</h1>
+
+        <div class="centered">
+            <p>Redirecting in: <span id="time"></span></p>
+            
+            <script>
+                // Get the error message from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const error = urlParams.get('error');
+                
+                // Display the error message
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = error;
+                document.querySelector('.centered').appendChild(errorMessage);
+
+                // Display time until redirect with dynamic countdown
+                let time = 6;
+                setInterval(() => {
+                    time--;
+                    document.getElementById('time').innerText = time;
+                }, 1000);
+
+                // Redirect the user back to the previous page
+                setTimeout(() => {
+                    window.history.back();
+                }, 6000);
+            </script>
+        </div>
+    </body>
+
+</html>
