@@ -35,6 +35,12 @@ def upload_file():
         file = request.files['app']
         if file.filename == '':
             return jsonify({"error": "No selected file"}), 400
+        
+        # Check if the file already exists in the database
+        cursor.execute("SELECT * FROM apps WHERE filename = %s", (file.filename,))
+        result = cursor.fetchone()
+        if result:
+            return jsonify({"error": "File already exists in the database"})
 
         # Save the file to the filesystem
         file_path = os.path.join(BASE_DIR, file.filename)
