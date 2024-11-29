@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preload" href="/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/css/styles.css"></noscript>
+
+        <meta charset="UTF-8">
+        <title>Quark Apps - Admin</title>
+        <meta name="description" content="The Quark Apps website">
+    </head>
+
+    <body>
+        <h1 class="centered">Quark Apps</h1>
+
+        <!-- Create a form with an input type="file" to allow the user to upload a new app -->
+        <form action="/admin/update" method="post" enctype="multipart/form-data">
+            <h2 class="centered">Update App</h2>
+
+            <div class="centered">
+                <p>Upload the new version of your app. Max filesize: 1G</p>
+                <p>For apps larger than 1G, use a FTP application.</p><br>
+
+                <div class="centered-flex">
+                    <p>App Version: </p>
+                    <input type="text" name="app_version" id="app_version" required>
+                </div>
+
+                <div class="centered">
+                    <input type="file" name="app" id="app" required>
+                    <button type="submit" class="default-button" style="background-color: #5f5fff;">Upload</button>
+                </div>
+
+                <div class="centered">
+                    <button type="button" class="default-button" style="background-color: red;" onclick="window.location.href='/'">Cancel</button>
+                </div>
+                
+                <!-- Hidden input for app_id -->
+                <input type="hidden" name="app_id" id="app_id">
+            </div>
+        </form>
+
+        <script>
+            // Function to get query parameter value by name
+            function getQueryParam(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // Set the app_id hidden input value
+            document.getElementById('app_id').value = getQueryParam('app_id');
+        </script>
+    </body>
+</html>

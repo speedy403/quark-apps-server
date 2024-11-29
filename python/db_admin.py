@@ -23,7 +23,6 @@ def upload_file():
     # Check if the connection is valid
     if connection is None:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-        return None
     
     # Check if the file is in the request
     if 'app' not in request.files:
@@ -150,6 +149,69 @@ def db_recompute():
         # Return the user to the admin page
         return redirect('/')
 
+
+# Function to redirect the user to the correct update page for an app
+@app.route('/admin/update/<int:app_id>', methods=['GET'])
+def update_file(app_id):
+    return redirect(f'/update.html?app_id={app_id}')
+
+# Function to update the file in the database
+@app.route('/admin/update', methods=['POST'])
+def update_file_post():
+    # Create the connection to the database 5 retries, 5 seconds apart
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+
+    # Check if the file is in the request
+    if 'app' not in request.files:
+        return redirect(f'/error.html?error=No+file+part+in+the+request')
+
+    # Create the cursor
+    with connection.cursor() as cursor:
+        # Get the file from the request
+        file = request.files['app']
+        if file.filename == '':
+            return redirect(f'/error.html?error=No+selected+file')
+
+        # Get the app_id from the form
+        app_id = request.form['app_id']
+
+        # Query the database for the existing file information
+        cursor.execute("SELECT filename FROM apps WHERE app_id = %s", (app_id,))
+        result = cursor.fetchone()
+
+        if not result:
+            return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+
+        # Use the filename from the database
+        file_path = os.path.join(BASE_DIR, result[0])
+        
+        # Save the updated file to the filesystem
+        file.save(file_path)
+
+        # Get the app version from the form
+        app_version = request.form['app_version']
+
+        # Calculate the SHA256 hash of the file
+        sha256_hash = calculate_sha256(file_path)
+
+        # Calculate the MD5 hash of the file
+        md5_hash = calculate_md5(file_path)
+
+        # Update the file in the database
+        cursor.execute("UPDATE apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, os.path.getsize(file_path), result[0], file_path, app_id))
+
+        # Commit the changes
+        connection.commit()
+
+    # Close the connection
+    connection.close()
+
+    # Return the user to the admin page
+    return redirect('/')
 
 # Run the app
 if __name__ == '__main__':
