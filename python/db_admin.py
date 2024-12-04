@@ -1,7 +1,7 @@
 # Script to manage existing files in the database
 
 # Dependencies
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, render_template
 import os
 
 # Import local dependencies
@@ -207,6 +207,86 @@ def update_file_post():
         # Commit the changes
         connection.commit()
 
+    # Close the connection
+    connection.close()
+
+    # Return the user to the admin page
+    return redirect('/')
+
+
+# Function to edit a database entry
+@app.route('/admin/edit/<int:app_id>', methods=['GET'])
+def edit_file(app_id):
+    # get the current information from the database to fill the form
+    app_id = app_id
+
+    # Create the connection to the database 5 retries, 5 seconds apart
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    
+    # Create the cursor
+    with connection.cursor() as cursor:
+        # Query the database for the app information
+        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        result = cursor.fetchone()
+
+    # Close the connection
+    connection.close()
+
+    # Display the edit page with the information
+    return render_template('edit.html', app_id=app_id, app_name=result[1], app_version=result[2], sha256_hash=result[3], md5_hash=result[4], last_updated=result[5], filesize=result[6], filename=result[7], path=result[8])
+
+# Function to submit the edit
+@app.route('/admin/edit', methods=['POST'])
+def edit_file_post():
+    # Get the form data
+    app_id = request.form.get('app_id', None)
+    app_name = request.form.get('app_name', None)
+    app_version = request.form.get('app_version', None)
+    sha256_hash = request.form.get('sha256_hash', None)
+    md5_hash = request.form.get('md5_hash', None)
+    last_updated = request.form.get('last_updated', None)
+    filesize = request.form.get('filesize', None)
+    filename = request.form.get('filename', None)
+    path = request.form.get('path', None)
+    
+    # Create the connection to the database 5 retries, 5 seconds apart
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    
+    # get the current information from the database to fill missing form fields
+    with connection.cursor() as cursor:
+        # Query the database for the app information
+        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        result = cursor.fetchone()
+
+    # Check if result is None
+    if result is None:
+        return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+
+    # Check if the form fields are empty
+    app_name = app_name if app_name else result[1]
+    app_version = app_version if app_version else result[2]
+    sha256_hash = sha256_hash if sha256_hash else result[3]
+    md5_hash = md5_hash if md5_hash else result[4]
+    last_updated = last_updated if last_updated else result[5]
+    filesize = filesize if filesize else result[6]
+    filename = filename if filename else result[7]
+    path = path if path else result[8]
+    
+    # Create the cursor
+    with connection.cursor() as cursor:
+        cursor.execute("UPDATE apps SET app_name = %s, app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_name, app_version, sha256_hash, md5_hash, last_updated, filesize, filename, path, app_id))
+
+        # Commit the changes
+        connection.commit()
+    
     # Close the connection
     connection.close()
 

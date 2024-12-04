@@ -15,6 +15,9 @@ WORKDIR /app
 # Copy the flask app
 COPY python /app
 
+# Copy the flask templates
+COPY admin/templates /app/templates
+
 # Copy the website content
 COPY html /usr/share/nginx/html
 COPY admin /usr/share/nginx/admin

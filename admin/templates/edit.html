@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preload" href="/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/css/styles.css"></noscript>
+
+        <meta charset="UTF-8">
+        <title>Quark Apps - Admin</title>
+        <meta name="description" content="The Quark Apps website">
+    </head>
+
+    <body>
+        <h1 class="centered">Quark Apps</h1>
+
+        <!-- Create a form with an input type="file" to allow the user to upload a new app -->
+        <form action="/admin/edit" method="post" enctype="multipart/form-data">
+            <h2 class="centered">Edit App</h2>
+
+            <div class="centered">
+                <p>Use this page to edit specific details about an app already on the server.</p>
+                <p>If you need to update an app, use the update page instead.</p><br>
+
+                <div class="centered">
+
+                    <h2>Current Information:</h2>
+
+                    <div class="centered-flex" style="flex-direction: column; align-items: flex-start; max-width: 80%; margin: auto;">
+
+                        <p><strong>App Name:</strong> {{ app_name }}</p>
+                        <p><strong>Version:</strong> {{ app_version }}</p>
+                        <p><strong>SHA-256 Hash:</strong> {{ sha256_hash }}</p>
+                        <p><strong>MD5 Hash:</strong> {{ md5_hash }}</p>
+                        <p><strong>Last Updated:</strong> {{ last_updated }}</p>
+                        <p><strong>Filesize:</strong> {{ filesize }}</p>
+                        <p><strong>Filename:</strong> {{ filename }}</p>
+                        <p><strong>Path:</strong> {{ path }}</p>
+
+                    </div>
+
+
+                </div>
+
+                <div class="centered">
+                    
+                    <h2>Update Information:</h2>
+
+                    <div class="centered-flex">
+                        <label for="app_version">New Version: </label>
+                        <input type="text" name="app_version" id="app_version" required>
+                    </div>
+                </div>
+
+                <div class="centered">
+                    <button type="submit" class="default-button" style="background-color: #5f5fff;">Confirm Edit</button>
+                </div>
+
+                <div class="centered">
+                    <button type="button" class="default-button" style="background-color: red;" onclick="window.location.href='/'">Cancel</button>
+                </div>
+
+                <!-- Hidden input for app_id -->
+                <input type="hidden" name="app_id" id="app_id" value="{{ app_id }}">
+            </div>
+        </form>
+    </body>
+</html>
