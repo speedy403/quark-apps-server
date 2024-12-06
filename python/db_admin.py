@@ -3,6 +3,7 @@
 # Dependencies
 from flask import Flask, redirect, request, render_template
 import os
+import datetime
 
 # Import local dependencies
 from db_connector import *
@@ -201,8 +202,11 @@ def update_file_post():
         # Calculate the MD5 hash of the file
         md5_hash = calculate_md5(file_path)
 
+        # Get the current date and time
+        last_updated = datetime.datetime.now()
+
         # Update the file in the database
-        cursor.execute("UPDATE apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, os.path.getsize(file_path), result[0], file_path, app_id))
+        cursor.execute("UPDATE apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, last_updated, os.path.getsize(file_path), result[0], file_path, app_id))
 
         # Commit the changes
         connection.commit()
@@ -279,10 +283,62 @@ def edit_file_post():
     filesize = filesize if filesize else result[6]
     filename = filename if filename else result[7]
     path = path if path else result[8]
+
+    # If the version is different, update the last_updated field
+    if app_version != result[2]:
+        last_updated = datetime.datetime.now()
     
     # Create the cursor
     with connection.cursor() as cursor:
         cursor.execute("UPDATE apps SET app_name = %s, app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_name, app_version, sha256_hash, md5_hash, last_updated, filesize, filename, path, app_id))
+
+        # Commit the changes
+        connection.commit()
+    
+    # Close the connection
+    connection.close()
+
+    # Return the user to the admin page
+    return redirect('/')
+
+
+# Function to recalculate the sums of a given file
+@app.route('/admin/sums/<int:app_id>', methods=['GET'])
+def recalculate_file(app_id):
+    # Create the connection to the database 5 retries, 5 seconds apart
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    
+    # Create the cursor
+    with connection.cursor() as cursor:
+        # Query the database for the app information
+        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        result = cursor.fetchone()
+
+    # Check if the file exists
+    if not result:
+        return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+
+    # Recalculate the SHA256 hash of the file
+    sha256_hash = calculate_sha256(result[8])
+
+    # Recalculate the MD5 hash of the file
+    md5_hash = calculate_md5(result[8])
+
+    # Create the connection to the database 5 retries, 5 seconds apart
+    connection = db_connect()
+
+    # Check if the connection is valid
+    if connection is None:
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    
+    # Create the cursor
+    with connection.cursor() as cursor:
+        # Update the file in the database
+        cursor.execute("UPDATE apps SET sha256_hash = %s, md5_hash = %s WHERE app_id = %s", (sha256_hash, md5_hash, app_id))
 
         # Commit the changes
         connection.commit()

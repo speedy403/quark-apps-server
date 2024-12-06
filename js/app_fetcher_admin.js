@@ -69,20 +69,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 row.insertCell(6).textContent = formattedDate;
 
-                // Add the update, edit, and delete buttons
-                const updateCell = row.insertCell(7);
+                // Add the sums, update, edit, and delete buttons
+                const sumsCell = row.insertCell(7);
+                const sumsLink = document.createElement('a');
+                sumsLink.href = `/admin/sums/${app.app_id}`;
+                sumsLink.textContent = 'Recalc';
+                sumsCell.appendChild(sumsLink);
+
+                const updateCell = row.insertCell(8);
                 const updateLink = document.createElement('a');
                 updateLink.href = `/admin/update/${app.app_id}`;
                 updateLink.textContent = 'Update';
                 updateCell.appendChild(updateLink);
             
-                const editCell = row.insertCell(8);
+                const editCell = row.insertCell(9);
                 const editLink = document.createElement('a');
                 editLink.href = `/admin/edit/${app.app_id}`;
                 editLink.textContent = 'Edit';
                 editCell.appendChild(editLink);
 
-                const deleteCell = row.insertCell(9);
+                const deleteCell = row.insertCell(10);
                 const deleteLink = document.createElement('a');
                 deleteLink.href = `/admin/delete/${app.app_id}`;
                 deleteLink.textContent = 'Delete';
