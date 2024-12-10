@@ -16,9 +16,13 @@ def clean_db():
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            print("DB_CLEANER: Unable to connect to the database")
+            return None
+    except:
         print("DB_CLEANER: Unable to connect to the database")
-        return
+        return None
     
     # Create the cursor
     with connection.cursor() as cursor:

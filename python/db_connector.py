@@ -14,7 +14,7 @@ db_config = {
 # Function to connect to the database
 def db_connect():
     # Create the connection to the database 5 retries, 5 seconds apart
-    for i in range(5):
+    for i in range(1):
         try:
             connection = pymysql.connect(**db_config)
             if connection.open:
@@ -24,6 +24,10 @@ def db_connect():
             time.sleep(5)
     
     # If the connection still fails, exit the script
-    if not connection.open:
+    try:
+        if not connection.open:
+            print("DB_CONNECTOR: Unable to connect to the database")
+            return None
+    except:
         print("DB_CONNECTOR: Unable to connect to the database")
         return None

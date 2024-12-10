@@ -20,9 +20,12 @@ BASE_DIR = '/usr/share/nginx/html/apps'
 def upload_file():
     # Create the connection to the database 5 retries, 5 seconds apart
     connection = db_connect()
-
+    
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
     
     # Check if the file is in the request
@@ -83,9 +86,11 @@ def delete_file(app_id):
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-        return None
 
     # Create the cursor
     with connection.cursor() as cursor:
@@ -124,9 +129,11 @@ def db_recompute():
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
-        print("DB_RECOMPUTE: Unable to connect to the database")
-        return
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
+        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
     
     # Attempt app_id recompute
     try:
@@ -163,7 +170,10 @@ def update_file_post():
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
 
     # Check if the file is in the request
@@ -228,7 +238,10 @@ def edit_file(app_id):
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
     
     # Create the cursor
@@ -261,7 +274,10 @@ def edit_file_post():
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
     
     # get the current information from the database to fill missing form fields
@@ -309,7 +325,10 @@ def recalculate_file(app_id):
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+    except:
         return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
     
     # Create the cursor

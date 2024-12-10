@@ -13,7 +13,11 @@ def init_db():
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if connection is None:
+            print("DB_INIT: Unable to connect to the database")
+            return None
+    except:
         print("DB_INIT: Unable to connect to the database")
         return None
 

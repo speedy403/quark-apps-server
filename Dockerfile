@@ -9,6 +9,9 @@ RUN apt-get update && \
     apt-get install -y python3-pymysql && \
     apt-get install -y gunicorn
 
+# Expose port 3306 for MySQL
+EXPOSE 3306
+
 # Set the working directory to the flask app
 WORKDIR /app
 
@@ -38,9 +41,9 @@ RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Start the NGINX and Gunicorn services
-CMD ["sh", "-c", "gunicorn -w 4 -b 0.0.0.0:5000 db_reader:app \
-        & gunicorn -w 4 -b 0.0.0.0:5001: hash_api:app \
-        & gunicorn -w 4 -b 0.0.0.0:5002: db_admin:app \
+CMD ["sh", "-c", "gunicorn -w 4 -b 0.0.0.0:5000 db_reader:app --timeout 3600 \
+        & gunicorn -w 4 -b 0.0.0.0:5001: hash_api:app --timeout 3600 \
+        & gunicorn -w 4 -b 0.0.0.0:5002: db_admin:app --timeout 3600 \
         & python3 /app/db_init.py \
         & python3 /app/db_cleaner.py \
         & nginx -g 'daemon off;'"]

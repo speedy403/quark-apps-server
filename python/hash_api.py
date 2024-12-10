@@ -23,8 +23,11 @@ def get_sha256(file_path):
     # Connect to the database
     connection = db_connect()
 
-    # Check if connection was successful
-    if not connection:
+    # Check if the connection is valid
+    try:
+        if not connection.open:
+            return jsonify({"error": "Unable to connect to the database"}), 500
+    except:
         return jsonify({"error": "Unable to connect to the database"}), 500
     
     # Merge the file path with the base directory
@@ -51,8 +54,11 @@ def get_md5(file_path):
     # Connect to the database
     connection = db_connect()
 
-    # Check if connection was successful
-    if not connection:
+    # Check if the connection is valid
+    try:
+        if not connection.open:
+            return jsonify({"error": "Unable to connect to the database"}), 500
+    except:
         return jsonify({"error": "Unable to connect to the database"}), 500
     
     # Merge the file path with the base directory

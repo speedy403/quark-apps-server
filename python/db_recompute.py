@@ -13,11 +13,15 @@ def db_recompute():
 
     # Create the connection to the database 5 retries, 5 seconds apart
     connection = db_connect()
-
+    
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if not connection.open:
+            print("DB_RECOMPUTE: Unable to connect to the database")
+            return None
+    except:
         print("DB_RECOMPUTE: Unable to connect to the database")
-        return
+        return None
     
     # Attempt app_id recompute
     try:

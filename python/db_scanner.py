@@ -39,9 +39,13 @@ def scan_apps():
     
     # Create the connection to the database 5 retries, 5 seconds apart
     connection = db_connect()
-
+    
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if not connection.open:
+            print("DB_SCANNER: Unable to connect to the database")
+            return None
+    except:
         print("DB_SCANNER: Unable to connect to the database")
         return None
 

@@ -16,9 +16,13 @@ def get_apps():
     connection = db_connect()
 
     # Check if the connection is valid
-    if connection is None:
+    try:
+        if not connection.open:
+            print("DB_READER: Unable to connect to the database")
+            return None
+    except:
         print("DB_READER: Unable to connect to the database")
-        return None
+        return jsonify({"status": "failure", "message": "Unable to connect to the database"})
 
     # Query the database
     with connection.cursor() as cursor:
