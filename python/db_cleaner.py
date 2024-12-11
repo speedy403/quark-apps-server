@@ -12,6 +12,9 @@ def clean_db():
     # Print running message
     print("DB_CLEANER: Beginning database cleanup...")
     
+    # Wait 10 seconds before starting to allow for database and container startup
+    time.sleep(10)
+    
     # Create the connection to the database 5 retries, 5 seconds apart
     connection = db_connect()
 
