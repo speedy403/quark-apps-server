@@ -1,17 +1,8 @@
-# Flask script to read data from the MySQL database and return it as a JSON object
-
-# Dependencies
-from flask import Flask, jsonify
-
 # Import local dependencies
 from db_connector import *
 
-# Create a Flask app
-app = Flask(__name__)
-
-# Create the route to read the data from the database
-@app.route('/api/db_reader', methods=['GET'])
-def get_apps():
+# attempt to connect to the database and pull down a list of all apps
+def debug():
     # Create the connection to the database 5 retries, 5 seconds apart
     connection = db_connect()
 
@@ -22,7 +13,7 @@ def get_apps():
             return None
     except:
         print("DB_READER: Unable to connect to the database")
-        return jsonify({"status": "failure", "message": "Unable to connect to the database"})
+        return {"status": "failure", "message": "Unable to connect to the database"}
 
     # Query the database
     with connection.cursor() as cursor:
@@ -63,8 +54,8 @@ def get_apps():
     connection.close()
 
     # Return the data as a JSON object
-    return jsonify(apps_list)
+    return apps_list, bad_apps
 
-# Run the app
+# Run the debug function
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug()
