@@ -37,7 +37,7 @@ def init_db():
         else:
             print("DB_INIT: Table does not exist, initializing...")
             # Create the table
-            cursor.execute('CREATE TABLE quark.apps (app_id INT PRIMARY KEY AUTO_INCREMENT, app_name VARCHAR(255) NOT NULL, app_version VARCHAR(255) NOT NULL, sha256_hash VARCHAR(255) NOT NULL, md5_hash VARCHAR(255) NOT NULL, last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, filesize VARCHAR(255) NOT NULL, filename VARCHAR(255) NOT NULL, path VARCHAR(255) NOT NULL);')
+            cursor.execute('CREATE TABLE apps (app_id INT PRIMARY KEY AUTO_INCREMENT, app_name VARCHAR(255) NOT NULL, app_version VARCHAR(255) NOT NULL, sha256_hash VARCHAR(255) NOT NULL, md5_hash VARCHAR(255) NOT NULL, last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, filesize VARCHAR(255) NOT NULL, filename VARCHAR(255) NOT NULL, path VARCHAR(255) NOT NULL);')
 
             # Commit the changes
             connection.commit()
