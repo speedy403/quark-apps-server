@@ -36,7 +36,7 @@ def get_sha256(file_path):
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for the SHA256 hash
-        cursor.execute("SELECT sha256_hash FROM quark.apps WHERE path = %s", (file_path))
+        cursor.execute("SELECT sha256_hash FROM apps WHERE path = %s", (file_path))
         result = cursor.fetchone()
     
     # Close the connection
@@ -67,7 +67,7 @@ def get_md5(file_path):
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for the MD5 hash
-        cursor.execute("SELECT md5_hash FROM quark.apps WHERE path = %s", (file_path))
+        cursor.execute("SELECT md5_hash FROM apps WHERE path = %s", (file_path))
         result = cursor.fetchone()
     
     # Close the connection

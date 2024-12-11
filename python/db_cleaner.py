@@ -30,7 +30,7 @@ def clean_db():
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for all files
-        cursor.execute("SELECT * FROM quark.apps;")
+        cursor.execute("SELECT * FROM apps;")
         files = cursor.fetchall()
 
         # Check if each file exists on the filesystem
@@ -39,7 +39,7 @@ def clean_db():
             if not os.path.exists(file_path):
                 print(f"DB_CLEANER: File not found: {file_path}")
                 # Delete the file from the database
-                cursor.execute("DELETE FROM quark.apps WHERE path = %s", (file_path,))
+                cursor.execute("DELETE FROM apps WHERE path = %s", (file_path,))
                 connection.commit()
         
     # Close the connection

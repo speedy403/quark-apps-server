@@ -52,7 +52,7 @@ def scan_apps():
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for all apps
-        cursor.execute("SELECT * FROM quark.apps")
+        cursor.execute("SELECT * FROM apps")
         apps = cursor.fetchall()
     
     # Close the connection
@@ -113,7 +113,7 @@ def scan_apps():
                 # Create the cursor
                 with connection.cursor() as cursor:
                     # Insert the app into the database
-                    cursor.execute("INSERT INTO quark.apps (app_name, app_version, sha256_hash, md5_hash, last_updated, filesize, filename, path) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (filename, 'N/A', sha256_hash, md5_hash, last_updated, filesize, filename, file_path))
+                    cursor.execute("INSERT INTO apps (app_name, app_version, sha256_hash, md5_hash, last_updated, filesize, filename, path) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (filename, 'N/A', sha256_hash, md5_hash, last_updated, filesize, filename, file_path))
 
                     # Commit the changes
                     connection.commit()

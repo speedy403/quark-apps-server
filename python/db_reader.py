@@ -27,7 +27,7 @@ def get_apps():
     # Query the database
     with connection.cursor() as cursor:
         # Read all the apps from the database
-        cursor.execute("SELECT * FROM quark.apps;")
+        cursor.execute("SELECT * FROM apps;")
         apps = cursor.fetchall()
 
     #

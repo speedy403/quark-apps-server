@@ -28,9 +28,9 @@ def db_recompute():
         # Recompute the app_id column
         with connection.cursor() as cursor:
             # Drop the column
-            cursor.execute("ALTER TABLE quark.apps DROP COLUMN app_id")
+            cursor.execute("ALTER TABLE apps DROP COLUMN app_id")
             # Add the column back
-            cursor.execute("ALTER TABLE quark.apps ADD COLUMN app_id INT PRIMARY KEY AUTO_INCREMENT FIRST")
+            cursor.execute("ALTER TABLE apps ADD COLUMN app_id INT PRIMARY KEY AUTO_INCREMENT FIRST")
             connection.commit()
     except:
         # If the recompute fails, print an error message
