@@ -24,26 +24,26 @@ def upload_file():
     # Check if the connection is valid
     try:
         if connection is None:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-    except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+            return render_template('error_template.html', error='Unable to connect to the database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
     
     # Check if the file is in the request
     if 'app' not in request.files:
-        return redirect(f'/error.html?error=No+file+part+in+the+request')
+        return render_template('error_template.html', error='No file part in the request')
 
     # Create the cursor
     with connection.cursor() as cursor:
         # Get the file from the request
         file = request.files['app']
         if file.filename == '':
-            return redirect(f'/error.html?error=No+selected+file')
+            return render_template('error_template.html', error='No selected file')
         
         # Check if the file already exists in the database
         cursor.execute("SELECT * FROM apps WHERE filename = %s", (file.filename,))
         result = cursor.fetchone()
         if result:
-            return redirect(f'/error.html?error=File+already+exists+in+the+database')
+            return render_template('error_template.html', error='File already exists in the database')
 
         # Save the file to the filesystem
         file_path = os.path.join(BASE_DIR, file.filename)
@@ -88,9 +88,9 @@ def delete_file(app_id):
     # Check if the connection is valid
     try:
         if connection is None:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-    except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+            return render_template('error_template.html', error='Unable to connect to the database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
 
     # Create the cursor
     with connection.cursor() as cursor:
@@ -101,12 +101,13 @@ def delete_file(app_id):
         # Try to delete the file from the filesystem using the file_path from the database
         try:
             os.remove(result[8])
-        except:
-            return redirect(f'/error.html?error=Unable+to+delete+file+from+the+filesystem')
+        except Exception as e:
+            return render_template('error_template.html', error=e)
+        
 
         # Check if the file exists in the database
         if not result:
-            return redirect(f'/error.html?error=Unable+to+delete+file+from+the+filesystem')
+            return render_template('error_template.html', error='App ID not found in the database')
 
         # Delete the file from the database
         cursor.execute("DELETE FROM apps WHERE app_id = %s", (app_id,))
@@ -131,9 +132,9 @@ def db_recompute():
     # Check if the connection is valid
     try:
         if connection is None:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-    except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+            return render_template('error_template.html', error='Unable to connect to the database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
     
     # Attempt app_id recompute
     try:
@@ -144,10 +145,10 @@ def db_recompute():
             # Add the column back
             cursor.execute("ALTER TABLE apps ADD COLUMN app_id INT PRIMARY KEY AUTO_INCREMENT FIRST")
             connection.commit()
-    except:
+    except Exception as e:
         # If the recompute fails, print an error message
         print("DB_RECOMPUTE: Error recomputing app_id column")
-        return redirect(f'/error.html?error=Error+recomputing+app_id+column')
+        return render_template('error_template.html', error=e)
     
     finally:
         # Close the connection
@@ -173,63 +174,66 @@ def update_file_post():
         # Check if the connection is valid
         try:
             if connection is None:
-                return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-        except:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+                return render_template('error_template.html', error='Unable to connect to the database')
+        except Exception as e:
+            return render_template('error_template.html', error=e)
 
         # Check if the file is in the request
         if 'app' not in request.files:
-            return redirect(f'/error.html?error=No+file+part+in+the+request')
+            return render_template('error_template.html', error='No file part in the request')
 
         # Create the cursor
-        with connection.cursor() as cursor:
-            # Get the file from the request
-            file = request.files['app']
-            if file.filename == '':
-                return redirect(f'/error.html?error=No+selected+file')
+        try:
+            with connection.cursor() as cursor:
+                # Get the file from the request
+                file = request.files['app']
+                if file.filename == '':
+                    return render_template('error_template.html', error='No selected file')
 
-            # Get the app_id from the form
-            app_id = request.form['app_id']
+                # Get the app_id from the form
+                app_id = request.form['app_id']
 
-            # Query the database for the existing file information
-            cursor.execute("SELECT filename FROM apps WHERE app_id = %s", (app_id,))
-            result = cursor.fetchone()
+                # Query the database for the existing file information
+                cursor.execute("SELECT filename FROM apps WHERE app_id = %s", (app_id,))
+                result = cursor.fetchone()
 
-            if not result:
-                return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+                if not result:
+                    return render_template('error_template.html', error='App ID not found in the database')
 
-            # Use the filename from the database
-            file_path = os.path.join(BASE_DIR, result[0])
-            
-            # Save the updated file to the filesystem
-            file.save(file_path)
+                # Use the filename from the database
+                file_path = os.path.join(BASE_DIR, result[0])
+                
+                # Save the updated file to the filesystem
+                file.save(file_path)
 
-            # Get the app version from the form
-            app_version = request.form['app_version']
+                # Get the app version from the form
+                app_version = request.form['app_version']
 
-            # Calculate the SHA256 hash of the file
-            sha256_hash = calculate_sha256(file_path)
+                # Calculate the SHA256 hash of the file
+                sha256_hash = calculate_sha256(file_path)
 
-            # Calculate the MD5 hash of the file
-            md5_hash = calculate_md5(file_path)
+                # Calculate the MD5 hash of the file
+                md5_hash = calculate_md5(file_path)
 
-            # Get the current date and time
-            last_updated = datetime.datetime.now()
+                # Get the current date and time
+                last_updated = datetime.datetime.now()
 
-            # Update the file in the database
-            cursor.execute("UPDATE apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, last_updated, os.path.getsize(file_path), result[0], file_path, app_id))
+                # Update the file in the database
+                cursor.execute("UPDATE apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, last_updated, os.path.getsize(file_path), result[0], file_path, app_id))
 
-            # Commit the changes
-            connection.commit()
+                # Commit the changes
+                connection.commit()
 
-        # Close the connection
-        connection.close()
+            # Close the connection
+            connection.close()
+        except Exception as e:
+            return render_template('error_template.html', error=e)
 
         # Return the user to the admin page
         return redirect('/')
     
-    except:
-        return redirect(f'/error.html?error=Error+adding+file+to+the+database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
 
 
 # Function to edit a database entry
@@ -244,9 +248,9 @@ def edit_file(app_id):
     # Check if the connection is valid
     try:
         if connection is None:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-    except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+            return render_template('error_template.html', error='Unable to connect to the database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
     
     # Create the cursor
     with connection.cursor() as cursor:
@@ -280,9 +284,9 @@ def edit_file_post():
     # Check if the connection is valid
     try:
         if connection is None:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-    except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+            return render_template('error_template.html', error='Unable to connect to the database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
     
     # get the current information from the database to fill missing form fields
     with connection.cursor() as cursor:
@@ -292,7 +296,7 @@ def edit_file_post():
 
     # Check if result is None
     if result is None:
-        return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+        return render_template('error_template.html', error='App ID not found in the database')
 
     # Check if the form fields are empty
     app_name = app_name if app_name else result[1]
@@ -331,9 +335,9 @@ def recalculate_file(app_id):
     # Check if the connection is valid
     try:
         if connection is None:
-            return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-    except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+            return render_template('error_template.html', error='Unable to connect to the database')
+    except Exception as e:
+        return render_template('error_template.html', error=e)
     
     # Create the cursor
     with connection.cursor() as cursor:
@@ -343,7 +347,7 @@ def recalculate_file(app_id):
 
     # Check if the file exists
     if not result:
-        return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+        return render_template('error_template.html', error='App ID not found in the database')
 
     # Recalculate the SHA256 hash of the file
     sha256_hash = calculate_sha256(result[8])
@@ -356,7 +360,7 @@ def recalculate_file(app_id):
 
     # Check if the connection is valid
     if connection is None:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+        return render_template('error_template.html', error='Unable to connect to the database')
     
     # Create the cursor
     with connection.cursor() as cursor:
@@ -372,10 +376,14 @@ def recalculate_file(app_id):
     # Return the user to the admin page
     return redirect('/')
 
-# Function to display the error page
+# Error handling
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('404_template.html', error=error), 404
+
 @app.errorhandler(500)
 def internal_error(error):
-    return redirect(f'/error.html?error=Internal+server+error')
+    return render_template('error_template.html', error=error), 500
 
 # Run the app
 if __name__ == '__main__':

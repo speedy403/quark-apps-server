@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preload" href="/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/css/styles.css"></noscript>
+
+
+        <meta charset="UTF-8">
+        <title>Quark Apps Admin</title>
+        <meta name="description" content="The Quark Apps website">
+    </head>
+
+    <body>
+        <!-- Handle error reporting from the ?error= varable passed to the page -->
+        <h1 class="centered">Quark Error</h1>
+
+        <h2 class="centered">Status 500</h2>
+
+        <div class="centered">
+            <!-- Display the error message -->
+            <p>{{ error }}</p>
+        </div>
+    </body>
+
+</html>

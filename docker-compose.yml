@@ -10,7 +10,7 @@ services:
       - PORT=8080
       - ADMIN_PORT=9000
       - HOST=0.0.0.0
-#      - QUARK_DB_HOST=quark-db-us-east-1.cvgakeqek4do.us-east-1.rds.amazonaws.com
+#      - QUARK_DB_HOST=example.com
       - QUARK_DB_NAME=quark
       - QUARK_DB_USER=quark
       - QUARK_DB_PASS=quarkPassw0rd # Change for production use
