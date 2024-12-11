@@ -3,3 +3,6 @@
 
 # Ignore the database directory
 /db/*
+
+# Ignore the SETUP directory
+/SETUP
