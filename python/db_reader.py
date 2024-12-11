@@ -27,7 +27,7 @@ def get_apps():
     # Query the database
     with connection.cursor() as cursor:
         # Read all the apps from the database
-        cursor.execute("SELECT * FROM apps")
+        cursor.execute("SELECT * FROM quark.apps;")
         apps = cursor.fetchall()
 
     #
@@ -35,7 +35,12 @@ def get_apps():
 
     # Convert to a list of dictionaries
     apps_list = []
+    bad_apps = []
     for app in apps:
+        if(len(app) != 8):
+            print("DB_READER: Invalid number of columns in the database: App: " + str(app))
+            bad_apps.append(app)
+            continue
         apps_list.append({
             'app_id': app[0],
             'app_name': app[1],
@@ -47,6 +52,10 @@ def get_apps():
             'filename': app[7],
             'path': app[8]
         })
+
+    # Print the bad apps
+    if len(bad_apps) > 0:
+        print("DB_READER: Bad apps: " + str(bad_apps))
 
     # Close the connection
     connection.close()

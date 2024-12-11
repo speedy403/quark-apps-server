@@ -40,7 +40,7 @@ def upload_file():
             return redirect(f'/error.html?error=No+selected+file')
         
         # Check if the file already exists in the database
-        cursor.execute("SELECT * FROM apps WHERE filename = %s", (file.filename,))
+        cursor.execute("SELECT * FROM quark.apps WHERE filename = %s", (file.filename,))
         result = cursor.fetchone()
         if result:
             return redirect(f'/error.html?error=File+already+exists+in+the+database')
@@ -59,7 +59,7 @@ def upload_file():
         md5_hash = calculate_md5(file_path)
 
         # Insert the file into the database
-        cursor.execute("INSERT INTO apps (app_name, app_version, sha256_hash, md5_hash, filesize, filename, path) VALUES (%s, %s, %s, %s, %s, %s, %s)", (file.filename, app_version, sha256_hash, md5_hash, os.path.getsize(file_path), file.filename, file_path))
+        cursor.execute("INSERT INTO quark.apps (app_name, app_version, sha256_hash, md5_hash, filesize, filename, path) VALUES (%s, %s, %s, %s, %s, %s, %s)", (file.filename, app_version, sha256_hash, md5_hash, os.path.getsize(file_path), file.filename, file_path))
         connection.commit()
 
     # Close the connection
@@ -95,7 +95,7 @@ def delete_file(app_id):
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for the file
-        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        cursor.execute("SELECT * FROM quark.apps WHERE app_id = %s", (app_id,))
         result = cursor.fetchone()
 
         # Try to delete the file from the filesystem using the file_path from the database
@@ -109,7 +109,7 @@ def delete_file(app_id):
             return redirect(f'/error.html?error=Unable+to+delete+file+from+the+filesystem')
 
         # Delete the file from the database
-        cursor.execute("DELETE FROM apps WHERE app_id = %s", (app_id,))
+        cursor.execute("DELETE FROM quark.apps WHERE app_id = %s", (app_id,))
         connection.commit()
 
     # Close the connection
@@ -140,9 +140,9 @@ def db_recompute():
         # Recompute the app_id column
         with connection.cursor() as cursor:
             # Drop the column
-            cursor.execute("ALTER TABLE apps DROP COLUMN app_id")
+            cursor.execute("ALTER TABLE quark.apps DROP COLUMN app_id")
             # Add the column back
-            cursor.execute("ALTER TABLE apps ADD COLUMN app_id INT PRIMARY KEY AUTO_INCREMENT FIRST")
+            cursor.execute("ALTER TABLE quark.apps ADD COLUMN app_id INT PRIMARY KEY AUTO_INCREMENT FIRST")
             connection.commit()
     except:
         # If the recompute fails, print an error message
@@ -166,66 +166,70 @@ def update_file(app_id):
 # Function to update the file in the database
 @app.route('/admin/update', methods=['POST'])
 def update_file_post():
-    # Create the connection to the database 5 retries, 5 seconds apart
-    connection = db_connect()
-
-    # Check if the connection is valid
     try:
-        if connection is None:
+        # Create the connection to the database 5 retries, 5 seconds apart
+        connection = db_connect()
+
+        # Check if the connection is valid
+        try:
+            if connection is None:
+                return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+        except:
             return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
+
+        # Check if the file is in the request
+        if 'app' not in request.files:
+            return redirect(f'/error.html?error=No+file+part+in+the+request')
+
+        # Create the cursor
+        with connection.cursor() as cursor:
+            # Get the file from the request
+            file = request.files['app']
+            if file.filename == '':
+                return redirect(f'/error.html?error=No+selected+file')
+
+            # Get the app_id from the form
+            app_id = request.form['app_id']
+
+            # Query the database for the existing file information
+            cursor.execute("SELECT filename FROM quark.apps WHERE app_id = %s", (app_id,))
+            result = cursor.fetchone()
+
+            if not result:
+                return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
+
+            # Use the filename from the database
+            file_path = os.path.join(BASE_DIR, result[0])
+            
+            # Save the updated file to the filesystem
+            file.save(file_path)
+
+            # Get the app version from the form
+            app_version = request.form['app_version']
+
+            # Calculate the SHA256 hash of the file
+            sha256_hash = calculate_sha256(file_path)
+
+            # Calculate the MD5 hash of the file
+            md5_hash = calculate_md5(file_path)
+
+            # Get the current date and time
+            last_updated = datetime.datetime.now()
+
+            # Update the file in the database
+            cursor.execute("UPDATE quark.apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, last_updated, os.path.getsize(file_path), result[0], file_path, app_id))
+
+            # Commit the changes
+            connection.commit()
+
+        # Close the connection
+        connection.close()
+
+        # Return the user to the admin page
+        return redirect('/')
+    
     except:
-        return redirect(f'/error.html?error=Unable+to+connect+to+the+database')
-
-    # Check if the file is in the request
-    if 'app' not in request.files:
-        return redirect(f'/error.html?error=No+file+part+in+the+request')
-
-    # Create the cursor
-    with connection.cursor() as cursor:
-        # Get the file from the request
-        file = request.files['app']
-        if file.filename == '':
-            return redirect(f'/error.html?error=No+selected+file')
-
-        # Get the app_id from the form
-        app_id = request.form['app_id']
-
-        # Query the database for the existing file information
-        cursor.execute("SELECT filename FROM apps WHERE app_id = %s", (app_id,))
-        result = cursor.fetchone()
-
-        if not result:
-            return redirect(f'/error.html?error=App+ID+not+found+in+the+database')
-
-        # Use the filename from the database
-        file_path = os.path.join(BASE_DIR, result[0])
-        
-        # Save the updated file to the filesystem
-        file.save(file_path)
-
-        # Get the app version from the form
-        app_version = request.form['app_version']
-
-        # Calculate the SHA256 hash of the file
-        sha256_hash = calculate_sha256(file_path)
-
-        # Calculate the MD5 hash of the file
-        md5_hash = calculate_md5(file_path)
-
-        # Get the current date and time
-        last_updated = datetime.datetime.now()
-
-        # Update the file in the database
-        cursor.execute("UPDATE apps SET app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_version, sha256_hash, md5_hash, last_updated, os.path.getsize(file_path), result[0], file_path, app_id))
-
-        # Commit the changes
-        connection.commit()
-
-    # Close the connection
-    connection.close()
-
-    # Return the user to the admin page
-    return redirect('/')
+        return redirect(f'/error.html?error=Error+adding+file+to+the+database')
 
 
 # Function to edit a database entry
@@ -247,7 +251,7 @@ def edit_file(app_id):
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for the app information
-        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        cursor.execute("SELECT * FROM quark.apps WHERE app_id = %s", (app_id,))
         result = cursor.fetchone()
 
     # Close the connection
@@ -283,7 +287,7 @@ def edit_file_post():
     # get the current information from the database to fill missing form fields
     with connection.cursor() as cursor:
         # Query the database for the app information
-        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        cursor.execute("SELECT * FROM quark.apps WHERE app_id = %s", (app_id,))
         result = cursor.fetchone()
 
     # Check if result is None
@@ -306,7 +310,7 @@ def edit_file_post():
     
     # Create the cursor
     with connection.cursor() as cursor:
-        cursor.execute("UPDATE apps SET app_name = %s, app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_name, app_version, sha256_hash, md5_hash, last_updated, filesize, filename, path, app_id))
+        cursor.execute("UPDATE quark.apps SET app_name = %s, app_version = %s, sha256_hash = %s, md5_hash = %s, last_updated = %s, filesize = %s, filename = %s, path = %s WHERE app_id = %s", (app_name, app_version, sha256_hash, md5_hash, last_updated, filesize, filename, path, app_id))
 
         # Commit the changes
         connection.commit()
@@ -334,7 +338,7 @@ def recalculate_file(app_id):
     # Create the cursor
     with connection.cursor() as cursor:
         # Query the database for the app information
-        cursor.execute("SELECT * FROM apps WHERE app_id = %s", (app_id,))
+        cursor.execute("SELECT * FROM quark.apps WHERE app_id = %s", (app_id,))
         result = cursor.fetchone()
 
     # Check if the file exists
@@ -357,7 +361,7 @@ def recalculate_file(app_id):
     # Create the cursor
     with connection.cursor() as cursor:
         # Update the file in the database
-        cursor.execute("UPDATE apps SET sha256_hash = %s, md5_hash = %s WHERE app_id = %s", (sha256_hash, md5_hash, app_id))
+        cursor.execute("UPDATE quark.apps SET sha256_hash = %s, md5_hash = %s WHERE app_id = %s", (sha256_hash, md5_hash, app_id))
 
         # Commit the changes
         connection.commit()
@@ -367,6 +371,11 @@ def recalculate_file(app_id):
 
     # Return the user to the admin page
     return redirect('/')
+
+# Function to display the error page
+@app.errorhandler(500)
+def internal_error(error):
+    return redirect(f'/error.html?error=Internal+server+error')
 
 # Run the app
 if __name__ == '__main__':
