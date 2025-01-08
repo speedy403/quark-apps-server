@@ -26,42 +26,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.insertCell(2).textContent = app.app_version;
                 
                 /* Requires HTTPS to work */
-                // const sha256Cell = row.insertCell(3);
-                // const sha256Link = document.createElement('a');
-                // sha256Link.href = '#';
-                // sha256Link.textContent = 'Copy';
-                // sha256Link.addEventListener('click', (event) => {
-                //     event.preventDefault();
-                //     navigator.clipboard.writeText(app.sha256_hash);
-                // });
-                // sha256Cell.appendChild(sha256Link);
-
-                // const md5Cell = row.insertCell(4);
-                // const md5Link = document.createElement('a');
-                // md5Link.href = '#';
-                // md5Link.textContent = 'Copy';
-                // md5Link.addEventListener('click', (event) => {
-                //     event.preventDefault();
-                //     navigator.clipboard.writeText(app.md5_hash);
-                // });
-                // md5Cell.appendChild(md5Link);
-
-                /* Use if HTTPS is not available */
                 const sha256Cell = row.insertCell(3);
-                const sha256Text = document.createElement('span');
-                sha256Text.textContent = app.sha256_hash;
-                sha256Text.style.whiteSpace = 'nowrap';
-                sha256Text.style.overflow = 'hidden';
-                sha256Text.style.textOverflow = 'ellipsis';
-                sha256Cell.appendChild(sha256Text);
+                const sha256Link = document.createElement('a');
+                sha256Link.href = '#';
+                sha256Link.textContent = 'Copy';
+                sha256Link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    navigator.clipboard.writeText(app.sha256_hash);
+                });
+                sha256Cell.appendChild(sha256Link);
 
                 const md5Cell = row.insertCell(4);
-                const md5Text = document.createElement('span');
-                md5Text.textContent = app.md5_hash;
-                md5Text.style.whiteSpace = 'nowrap';
-                md5Text.style.overflow = 'hidden';
-                md5Text.style.textOverflow = 'ellipsis';
-                md5Cell.appendChild(md5Text);
+                const md5Link = document.createElement('a');
+                md5Link.href = '#';
+                md5Link.textContent = 'Copy';
+                md5Link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    navigator.clipboard.writeText(app.md5_hash);
+                });
+                md5Cell.appendChild(md5Link);
+
+                // /* Use if HTTPS is not available */
+                // const sha256Cell = row.insertCell(3);
+                // const sha256Text = document.createElement('span');
+                // sha256Text.textContent = app.sha256_hash;
+                // sha256Text.style.whiteSpace = 'nowrap';
+                // sha256Text.style.overflow = 'hidden';
+                // sha256Text.style.textOverflow = 'ellipsis';
+                // sha256Cell.appendChild(sha256Text);
+
+                // const md5Cell = row.insertCell(4);
+                // const md5Text = document.createElement('span');
+                // md5Text.textContent = app.md5_hash;
+                // md5Text.style.whiteSpace = 'nowrap';
+                // md5Text.style.overflow = 'hidden';
+                // md5Text.style.textOverflow = 'ellipsis';
+                // md5Cell.appendChild(md5Text);
 
                 /* Add the app filesize */
                 filesize = app.filesize
