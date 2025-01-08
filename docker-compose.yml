@@ -22,6 +22,7 @@ services:
   quark_db:
     image: mysql:8.0.40-debian
     container_name: quark-apps-server-db
+    platform: linux/amd64
     ports:
       - "3306:3306"
     environment:
