@@ -1,5 +1,5 @@
 # Run the image builder script
-./scripts/imagebuild.ps1
+./scripts/imagebuild.sh
 
 # Run the recreation script
-./scripts/recreate.ps1
+./scripts/recreate.sh
