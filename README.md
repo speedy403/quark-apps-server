@@ -13,7 +13,7 @@ Then, a system administrator can use either their favorite MDM or scripting lang
 Using a simple, elegant HTML and CSS frontend, users or administrators can see the available apps on the server, as well as their size, version, and date uploaded.
 
 ### Admin Panel
-The admin panel is a separate UI that should have access restricted via any means that the implementing systems administrator desires. The recommended way is by restricting access via VLANs
+The admin panel is a separate UI that should have access restricted via any means that the implementing systems administrator desires. The recommended way is by restricting access via subnets and associated firewall rules.
 
 
 ## The API
